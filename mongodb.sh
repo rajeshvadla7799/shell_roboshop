@@ -1,10 +1,8 @@
 #!/bin/bash
 
 USERID=$(id -u)
-
 LOGS_FOLDER="/var/log/Shell_roboshop"
 LOGS_FILE="$LOGS_FOLDER/mongodb.log"
-
 R="\e[31m"
 G="\e[32m"
 Y="\e[33m"
@@ -26,32 +24,33 @@ if [ $USERID -ne 0 ]; then
     exit 1
 fi
 
-apt update -y &>>$LOGS_FILE
-
-apt install curl gnupg -y &>>$LOGS_FILE
+apt update -y &>> $LOGS_FILE
+apt install curl gnupg -y &>> $LOGS_FILE
 VALIDATE $? "Installing dependencies"
 
+# Handled with --batch --yes to bypass 'Overwrite? (y/N)' prompts
 curl -fsSL https://pgp.mongodb.com/server-7.0.asc | \
-gpg --dearmor -o /usr/share/keyrings/mongodb-server-7.0.gpg &>>$LOGS_FILE
+gpg --batch --yes --dearmor -o /usr/share/keyrings/mongodb-server-7.0.gpg &>> $LOGS_FILE
 VALIDATE $? "Adding MongoDB GPG key"
 
-cp mongo.list /etc/apt/sources.list.d/mongodb-org-7.0.list
+# MATCHED TO mongo.repo
+cp mongo.repo /etc/apt/sources.list.d/mongodb-org-7.0.list
 VALIDATE $? "Copying MongoDB repo file"
 
-apt update -y &>>$LOGS_FILE
+apt update -y &>> $LOGS_FILE
 VALIDATE $? "Updating package cache"
 
-apt install mongodb-org -y &>>$LOGS_FILE
+apt install mongodb-org -y &>> $LOGS_FILE
 VALIDATE $? "Installing MongoDB"
 
-systemctl enable mongod &>>$LOGS_FILE
+systemctl enable mongod &>> $LOGS_FILE
 VALIDATE $? "Enabling MongoDB"
 
-systemctl start mongod &>>$LOGS_FILE
+systemctl start mongod &>> $LOGS_FILE
 VALIDATE $? "Starting MongoDB"
 
 sed -i 's/127.0.0.1/0.0.0.0/g' /etc/mongod.conf
 VALIDATE $? "Allowing MongoDB to listen on all IP addresses"
 
-systemctl restart mongod &>>$LOGS_FILE
+systemctl restart mongod &>> $LOGS_FILE
 VALIDATE $? "Restarting MongoDB"
