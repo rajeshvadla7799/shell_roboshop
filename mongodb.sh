@@ -28,7 +28,7 @@ apt update -y &>> $LOGS_FILE
 apt install curl gnupg -y &>> $LOGS_FILE
 VALIDATE $? "Installing dependencies"
 
-# Handled with --batch --yes to bypass 'Overwrite? (y/N)' prompts
+# Force gpg to overwrite the key automatically without prompting
 curl -fsSL https://pgp.mongodb.com/server-7.0.asc | \
 gpg --batch --yes --dearmor -o /usr/share/keyrings/mongodb-server-7.0.gpg &>> $LOGS_FILE
 VALIDATE $? "Adding MongoDB GPG key"
