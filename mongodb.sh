@@ -26,7 +26,7 @@ VALIDATE () {
     fi
 }
 
-cp mongo.repo /etc/apt/sources.list.d/mongo.repo
+cp mongo.repo /etc/apt/sources.list.d/*.list
 VALIDATE $? "Copying MongoDB repo file"
 
 apt install mongodb-org -y &>>$LOGS_FILE
