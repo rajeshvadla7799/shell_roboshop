@@ -10,12 +10,12 @@ N="\e[0m"
 
 mkdir -p $LOGS_FOLDER
 
-VALIDATE() {
+VALIDATE () {
     if [ $1 -ne 0 ]; then
-        echo -e "$R $2... Failure $N" | tee -a $LOGS_FILE
+        echo -e "$R $2... Failure $N"
         exit 1
     else
-        echo -e "$G $2... Success $N" | tee -a $LOGS_FILE
+        echo -e "$G $2... Success $N"
     fi
 }
 
@@ -40,7 +40,7 @@ VALIDATE $? "Copying MongoDB repo file"
 apt update -y &>> $LOGS_FILE
 VALIDATE $? "Updating package cache"
 
-apt install mongodb-org -y &>> $LOGS_FILE
+sudo apt install mongodb-org -y &>> $LOGS_FILE
 VALIDATE $? "Installing MongoDB"
 
 systemctl enable mongod &>> $LOGS_FILE
@@ -54,3 +54,4 @@ VALIDATE $? "Allowing MongoDB to listen on all IP addresses"
 
 systemctl restart mongod &>> $LOGS_FILE
 VALIDATE $? "Restarting MongoDB"
+
