@@ -1,19 +1,14 @@
 #!/bin/bash
 
 USERID=$(id -u)
+
 LOGS_FOLDER="/var/log/Shell_roboshop"
-LOGS_FILE="$LOGS_FOLDER/$0.log"
+LOGS_FILE="$LOGS_FOLDER/mongodb.log"
+
 R="\e[31m"
 G="\e[32m"
 Y="\e[33m"
-B="\e[34m"
-M="\e[35m"
 N="\e[0m"
-
-if [ $USERID -ne 0 ]; then
-    echo "$R Please run this script as root user $N" | tee -a $LOGS_FILE
-    exit 1
-fi
 
 mkdir -p $LOGS_FOLDER
 
@@ -26,8 +21,25 @@ VALIDATE() {
     fi
 }
 
-cp mongo.repo /etc/apt/sources.list.d/*.list
+if [ $USERID -ne 0 ]; then
+    echo -e "$R Please run as root user $N"
+    exit 1
+fi
+
+apt update -y &>>$LOGS_FILE
+
+apt install curl gnupg -y &>>$LOGS_FILE
+VALIDATE $? "Installing dependencies"
+
+curl -fsSL https://pgp.mongodb.com/server-7.0.asc | \
+gpg --dearmor -o /usr/share/keyrings/mongodb-server-7.0.gpg &>>$LOGS_FILE
+VALIDATE $? "Adding MongoDB GPG key"
+
+cp mongo.list /etc/apt/sources.list.d/mongodb-org-7.0.list
 VALIDATE $? "Copying MongoDB repo file"
+
+apt update -y &>>$LOGS_FILE
+VALIDATE $? "Updating package cache"
 
 apt install mongodb-org -y &>>$LOGS_FILE
 VALIDATE $? "Installing MongoDB"
@@ -38,7 +50,7 @@ VALIDATE $? "Enabling MongoDB"
 systemctl start mongod &>>$LOGS_FILE
 VALIDATE $? "Starting MongoDB"
 
-sed -i s/127.0.0.1/0.0.0.0/g /etc/mongod.conf
+sed -i 's/127.0.0.1/0.0.0.0/g' /etc/mongod.conf
 VALIDATE $? "Allowing MongoDB to listen on all IP addresses"
 
 systemctl restart mongod &>>$LOGS_FILE
