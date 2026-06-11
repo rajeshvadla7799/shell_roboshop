@@ -28,33 +28,33 @@ VALIDATE() {
 
 echo "MongoDB Installation Started: $(date)" | tee -a $LOGS_FILE
 
-apt update -y &>> $LOGS_FILE
-apt install curl gnupg -y &>> $LOGS_FILE
+sudo apt update &>> $LOGS_FILE
+sudo apt install curl gnupg -y &>> $LOGS_FILE
 VALIDATE $? "Installing dependencies"
 
-curl -fsSL https://pgp.mongodb.com/server-7.0.asc | \
-gpg --batch --yes --dearmor -o /usr/share/keyrings/mongodb-server-7.0.gpg &>> $LOGS_FILE
+sudo curl -fsSL https://pgp.mongodb.com/server-7.0.asc | \
+sudo gpg --batch --yes --dearmor -o /usr/share/keyrings/mongodb-server-7.0.gpg &>> $LOGS_FILE
 VALIDATE $? "Adding MongoDB GPG Key"
 
-cp mongodb-org-7.0.list /etc/apt/sources.list.d/mongodb-org-7.0.list &>> $LOGS_FILE
+sudo cp mongodb-org-7.0.list /etc/apt/sources.list.d/mongodb-org-7.0.list &>> $LOGS_FILE
 VALIDATE $? "Copying MongoDB Repository File"
 
-apt update -y &>> $LOGS_FILE
+sudo apt update -y &>> $LOGS_FILE
 VALIDATE $? "Updating Package Cache"
 
-apt install -y mongodb-org &>> $LOGS_FILE
+sudo apt install -y mongodb-org &>> $LOGS_FILE
 VALIDATE $? "Installing MongoDB"
 
-systemctl enable mongod &>> $LOGS_FILE
+sudo systemctl enable mongod &>> $LOGS_FILE
 VALIDATE $? "Enabling MongoDB"
 
-systemctl start mongod &>> $LOGS_FILE
+sudo systemctl start mongod &>> $LOGS_FILE
 VALIDATE $? "Starting MongoDB"
 
-sed -i 's/127.0.0.1/0.0.0.0/g' /etc/mongod.conf &>> $LOGS_FILE
+sudo sed -i 's/127.0.0.1/0.0.0.0/g' /etc/mongod.conf &>> $LOGS_FILE
 VALIDATE $? "Allowing Remote Connections"
 
-systemctl restart mongod &>> $LOGS_FILE
+sudo systemctl restart mongod &>> $LOGS_FILE
 VALIDATE $? "Restarting MongoDB"
 
 echo -e "$G MongoDB Installation Completed Successfully $N" | tee -a $LOGS_FILE
