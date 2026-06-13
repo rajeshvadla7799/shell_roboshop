@@ -26,12 +26,6 @@ VALIDATE () {
     fi
 }
 
-sudo dnf module disable nodejs -y &>>$LOGS_FILE
-VALIDATE $? "Disabling NodeJS default module"
-
-sudo dnf module enable nodejs:20 -y &>>$LOGS_FILE
-VALIDATE $? "Enabling NodeJS 20 module"
-
 sudo dnf install nodejs -y &>>$LOGS_FILE
 VALIDATE $? "Installing NodeJS"
 
