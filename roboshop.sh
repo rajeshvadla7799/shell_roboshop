@@ -1,7 +1,7 @@
 #!/bin/bash
 
 SG_ID="sg-011fc2a12c2612b46"
-AMI_ID="ami-0fe18bc3cfa53a248"
+AMI_ID="ami-0741dc526e1106ae5"
 ZONE_ID="Z008257517FWWZQ7V2B3N"
 DOMAIN_NAME="roboshop.com"
 
