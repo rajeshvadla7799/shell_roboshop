@@ -38,8 +38,7 @@ echo "IP address of $instance is $IP"
 
 aws route53 change-resource-record-sets \
   --hosted-zone-id $Zone_ID \
-  --change-batch 
-{
+  --change-batch '{
   "Comment": "updating record"
   "Changes": [
     {
@@ -59,4 +58,5 @@ aws route53 change-resource-record-sets \
 }
 
 echo "Record updated for $instance with IP $IP"
+
 done
