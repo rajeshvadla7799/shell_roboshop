@@ -37,25 +37,21 @@ do
 echo "IP address of $instance is $IP"
 
 aws route53 change-resource-record-sets \
-  --hosted-zone-id $Zone_ID \
-  --change-batch '{
-  "Comment": "updating record"
-  "Changes": [
-    {
-      "Action": "UPSERT",
-      "ResourceRecordSet": {
-        "Name": "$RECORD_NAME",
-        "Type": "A",
-        "TTL": 1,
-        "ResourceRecords": [
-          {
-            "Value": "$IP"
-          }
-        ]
+  --hosted-zone-id "$Zone_ID" \
+  --change-batch "{
+    \"Comment\": \"updating record\",
+    \"Changes\": [{
+      \"Action\": \"UPSERT\",
+      \"ResourceRecordSet\": {
+        \"Name\": \"$RECORD_NAME\",
+        \"Type\": \"A\",
+        \"TTL\": 1,
+        \"ResourceRecords\": [{
+          \"Value\": \"$IP\"
+        }]
       }
-    }
-  ]
-}
+    }]
+  }"
 
 echo "Record updated for $instance with IP $IP"
 
