@@ -75,8 +75,18 @@ VALIDATE $? "Starting catalogue service"
 cp $SCRIPT_DIR/mongodb.repo /etc/yum.repos.d/mongodb.repo &>>$LOGS_FILE
 VALIDATE $? "Copying MongoDB repo file"
 
-mongosh --host $MONGODB_HOST </app/db/master-data.js &>>$LOGS_FILE
-VALIDATE $? "Loading master data to MongoDB"
+INDEX=$(mongosh --host $MONGODB_HOST --quite --eval "db.getmongo().getDBnames().indexOf('catalogue')") &>>$LOGS_FILE
+VALIDATE $? "Creating MongoDB user for catalogue"
+
+if [ $INDEX -lt 0 ]; then
+    mongosh --host $MONGODB_HOST </app/db/master-data.js &>>$LOGS_FILE
+    VALIDATE $? "Loading products data into MongoDB"
+else
+    echo -e "$Y products database already exists, skipping data loading $N"
+fi
+
+systemctl restart catalogue &>>$LOGS_FILE
+VALIDATE $? "Restarting catalogue service"
 
 
 
