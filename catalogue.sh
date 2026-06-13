@@ -26,18 +26,18 @@ VALIDATE () {
     fi
 }
 
-dnf module disable nodejs -y &>>$LOGS_FILE
+sudo dnf module disable nodejs -y &>>$LOGS_FILE
 VALIDATE $? "Disabling NodeJS default module"
 
-dnf module enable nodejs:20 -y &>>$LOGS_FILE
+sudo dnf module enable nodejs:20 -y &>>$LOGS_FILE
 VALIDATE $? "Enabling NodeJS 20 module"
 
-dnf install nodejs -y &>>$LOGS_FILE
+sudo dnf install nodejs -y &>>$LOGS_FILE
 VALIDATE $? "Installing NodeJS"
 
 id roboshop &>>$LOGS_FILE
 if [ $? -ne 0 ]; then
-useradd --system --home /app --shell /sbin/nologin --comment "roboshop system user" roboshop &>>$LOGS_FILE
+sudo useradd --system --home /app --shell /sbin/nologin --comment "roboshop system user" roboshop &>>$LOGS_FILE
 VALIDATE $? "Adding roboshop user"
 else
     echo -e "$Y roboshop user already exists, skipping user creation $N"
