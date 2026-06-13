@@ -1,16 +1,16 @@
 #!/bin/bash
 
-SG_ID="sg-0e263b6954d7e9575"
+SG_ID="sg-011fc2a12c2612b46"
 AMI_ID="ami-0fe18bc3cfa53a248"
-Zone_ID="Z123456789ABCDEF"
-Domain_NAME="app.example.com"
+Zone_ID="Z008257517FWWZQ7V2B3N"
+Domain_NAME="roboshop.com"
 
 for instance in $@
 do
     INSTANCE_ID=$(aws ec2 run-instances \
     --image-id $AMI_ID \
     --instance-type t2.micro \
-    --key-name my-key \
+    --key-name Kubernates_keypair \
     --security-group-ids $SG_ID \
     --subnet-id subnet-xxxxxxxx \
     --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=DevServer}]' \
@@ -38,7 +38,7 @@ do
 echo "IP address of $instance is $IP"
 
 aws route53 change-resource-record-sets \
-  --hosted-zone-id Z123456789ABCDEF \
+  --hosted-zone-id $Zone_ID \
   --change-batch 
 {
   "Comment": "updating record"
@@ -46,16 +46,18 @@ aws route53 change-resource-record-sets \
     {
       "Action": "UPSERT",
       "ResourceRecordSet": {
-        "Name": "app.example.com",
+        "Name": "$RECORD_NAME",
         "Type": "A",
-        "TTL": 60,
+        "TTL": 1,
         "ResourceRecords": [
           {
-            "Value": "54.210.123.45"
+            "Value": "$IP"
           }
         ]
       }
     }
   ]
 }
+
+echo "Record updated for $instance with IP $IP"
 done

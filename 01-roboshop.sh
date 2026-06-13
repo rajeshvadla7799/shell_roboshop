@@ -1,15 +1,15 @@
 #!/bin/bash
 
-SG_ID="sg-011fc2a12c2612b46
+SG_ID="sg-011fc2a12c2612b4"
 AMI_ID="ami-0fe18bc3cfa53a248"
 
 for instance in $@
 do
     INSTANCE_ID=$(aws ec2 run-instances \
-    --image-id $AMI_ID \
+    --image-id ami-0fe18bc3cfa53a248 \
     --instance-type t3.micro \
     --key-name kubernates_keypair \
-    --security-group-ids $SG_ID \
+    --security-group-ids sg-011fc2a12c2612b4 \
     --subnet-id subnet-xxxxxxxx \
     --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=mongodb}]' \
     --query 'Instances[0].InstanceId' \
