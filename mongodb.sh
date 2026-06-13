@@ -26,10 +26,13 @@ VALIDATE () {
     fi
 }
 
-cp mongodb.repo /etc/yum.repos.d/mongodb.repo &>>$LOGS_FILE
+cp mongodb.repo /etc/apt/sources.list.d/mongodb.list &>>$LOGS_FILE
 VALIDATE $? "Copying MongoDB repo file"
 
-dnf install mongodb-org -y &>>$LOGS_FILE
+apt-get update &>>$LOGS_FILE
+VALIDATE $? "Updating package list"
+
+apt-get install mongodb-org -y &>>$LOGS_FILE
 VALIDATE $? "Installing MongoDB"
 
 systemctl enable mongod &>>$LOGS_FILE
