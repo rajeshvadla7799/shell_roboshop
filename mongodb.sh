@@ -26,13 +26,13 @@ VALIDATE () {
     fi
 }
 
-cp mongodb.repo /etc/apt/sources.list.d/mongodb.list &>>$LOGS_FILE
+cp mongodb.repo /etc/yum.repos.d/mongodb.repo &>>$LOGS_FILE
 VALIDATE $? "Copying MongoDB repo file"
 
-apt-get update &>>$LOGS_FILE
+dnf update -y &>>$LOGS_FILE
 VALIDATE $? "Updating package list"
 
-apt-get install mongodb-org -y &>>$LOGS_FILE
+dnf install mongodb-org -y &>>$LOGS_FILE
 VALIDATE $? "Installing MongoDB"
 
 systemctl enable mongod &>>$LOGS_FILE
@@ -44,7 +44,7 @@ VALIDATE $? "Starting MongoDB"
 sed -i 's/127.0.0.1/0.0.0.0/g' /etc/mongod.conf &>>$LOGS_FILE
 VALIDATE $? "allowing remote connection to MongoDB"
 
-restart mongod &>>$LOGS_FILE
+systemctl restart mongod &>>$LOGS_FILE
 VALIDATE $? "Restarted MongoDB"
 
 
