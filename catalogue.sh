@@ -10,6 +10,7 @@ B="\e[34m"
 M="\e[35m"
 N="\e[0m"
 SCRIPT_DIR=$(pwd)
+MONGODB_HOST="roboshop.com"
 
 if [ $USERID -ne 0 ]; then
     echo "$R Please run this script as root user $N" | tee -a $LOGS_FILE
@@ -71,7 +72,11 @@ VALIDATE $? "Enabling catalogue service"
 systemctl start catalogue
 VALIDATE $? "Starting catalogue service"
 
+cp $SCRIPT_DIR/mongodb.repo /etc/yum.repos.d/mongodb.repo &>>$LOGS_FILE
+VALIDATE $? "Copying MongoDB repo file"
 
+mongosh --host $MONGODB_HOST </app/db/master-data.js &>>$LOGS_FILE
+VALIDATE $? "Loading master data to MongoDB"
 
 
 
